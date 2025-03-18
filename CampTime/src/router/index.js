@@ -58,6 +58,8 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/')
+  } else if (authStore.isAuthenticated && to.path === '/') {
+    next('/dashboard')
   } else {
     next()
   }

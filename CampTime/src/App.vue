@@ -1,10 +1,22 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { onMounted, watch } from 'vue'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
+
+onMounted(async () => {
+  await authStore.init()
+})
+
+watch(() => authStore.isAuthenticated, (isAuthenticated) => {
+  if (isAuthenticated && route.path === '/') {
+    router.push('/dashboard')
+  }
+})
 </script>
 
 <template>
@@ -61,6 +73,7 @@ nav a.router-link-active {
 }
 
 main {
+  padding:  2em;
   flex: 1;
   background-color: var(--color-background);
 }

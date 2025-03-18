@@ -7,6 +7,31 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
   const user = ref(null)
   
+  async function init() {
+    const token = localStorage.getItem('token')
+    if (token) {
+      try {
+        const response = await fetch(`${API_URL}/auth/tokencheck`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        })
+
+        if (response.ok) {
+          user.value = await response.json()
+          isAuthenticated.value = true
+          return true
+        } else {
+          localStorage.removeItem('token')
+        }
+      } catch (error) {
+        console.error('Token validation error:', error)
+        localStorage.removeItem('token')
+      }
+    }
+    return false
+  }
+
   async function login(email, password) {
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
@@ -17,8 +42,10 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (!response.ok) throw new Error('Login failed')
 
-      user.value = await response.json()
+      const userData = await response.json()
+      user.value = userData
       isAuthenticated.value = true
+      localStorage.setItem('token', userData.token)
       return true
     } catch (error) {
       console.error('Login error:', error)
@@ -45,14 +72,28 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
+  async function logout() {
+    const token = localStorage.getItem('token')
+    if (token) {
+      try {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        })
+      } catch (error) {
+        console.error('Logout error:', error)
+      }
+    }
     user.value = null
     isAuthenticated.value = false
+    localStorage.removeItem('token')
   }
 
   return {
     isAuthenticated,
     user,
+    init,
     login,
     logout,
     register
