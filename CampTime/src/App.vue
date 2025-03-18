@@ -1,14 +1,15 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from './stores/auth'
 
 const route = useRoute()
-const isLoginPage = route.name === 'login'
+const authStore = useAuthStore()
 </script>
 
 <template>
   <div class="app-container">
-    <header v-if="!isLoginPage">
+    <header v-if="authStore.isAuthenticated">
       <nav>
         <RouterLink to="/dashboard">Dashboard</RouterLink>
         <RouterLink to="/groups">Gruppen</RouterLink>
@@ -19,7 +20,7 @@ const isLoginPage = route.name === 'login'
       </nav>
     </header>
 
-    <main :class="{ 'login-layout': isLoginPage }">
+    <main :class="{ 'login-layout': !authStore.isAuthenticated }">
       <RouterView />
     </main>
   </div>

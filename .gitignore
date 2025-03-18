@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+dist-ssr/
+build/
+*.local
+
+# Testing
+coverage/
+/cypress/videos/
+/cypress/screenshots/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# TypeScript
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+/mysql-data/
+
+# Docker
+docker-compose.override.yml
+*.pem
+
+# Development
+.hot/
+.history/

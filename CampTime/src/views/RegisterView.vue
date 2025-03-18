@@ -5,16 +5,34 @@ import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+const firstName = ref('')
+const lastName = ref('')
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
+const stamm = ref('')
 const errorMessage = ref('')
 
-const handleLogin = async () => {
+const handleRegister = async () => {
   errorMessage.value = ''
-  if (await authStore.login(email.value, password.value)) {
+  if (password.value !== confirmPassword.value) {
+    errorMessage.value = 'Passwörter stimmen nicht überein'
+    return
+  }
+
+  const success = await authStore.register({
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+    password: password.value,
+    stamm: stamm.value
+  })
+
+  if (success) {
     router.push('/dashboard')
   } else {
-    errorMessage.value = 'Login fehlgeschlagen'
+    errorMessage.value = 'Registrierung fehlgeschlagen'
   }
 }
 </script>
@@ -23,8 +41,26 @@ const handleLogin = async () => {
   <div class="login-container">
     <div class="login-box">
       <h1>CampTime</h1>
-      <h2>Anmeldung</h2>
-      <form @submit.prevent="handleLogin">
+      <h2>Registrierung</h2>
+      <form @submit.prevent="handleRegister">
+        <div class="form-group">
+          <label for="firstName">Vorname</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            v-model="firstName" 
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="lastName">Nachname</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            v-model="lastName" 
+            required
+          >
+        </div>
         <div class="form-group">
           <label for="email">Email</label>
           <input 
@@ -43,12 +79,30 @@ const handleLogin = async () => {
             required
           >
         </div>
-        <button type="submit">Anmelden</button>
-        <p class="switch-text">
-          Noch kein Konto? 
-          <RouterLink to="/register">Registrieren</RouterLink>
-        </p>
+        <div class="form-group">
+          <label for="confirmPassword">Passwort bestätigen</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            v-model="confirmPassword" 
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="stamm">Stamm</label>
+          <input 
+            type="text" 
+            id="stamm" 
+            v-model="stamm" 
+            required
+          >
+        </div>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <button type="submit">Registrieren</button>
+        <p class="switch-text">
+          Bereits ein Konto? 
+          <RouterLink to="/">Anmelden</RouterLink>
+        </p>
       </form>
     </div>
   </div>
@@ -98,6 +152,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 button:hover {
