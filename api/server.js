@@ -5,6 +5,7 @@ import { createAuthRouter } from './src/routes/authRoutes.js'
 import { createGroupRouter } from './src/routes/groupRoutes.js'
 import { createMemberRouter } from './src/routes/memberRoutes.js'
 import { createActivityRouter } from './src/routes/activityRoutes.js'
+import { createMeetingRouter } from './src/routes/meetingRoutes.js'
 
 const app = express()
 
@@ -25,7 +26,8 @@ async function startServer() {
     app.use('/api/auth', createAuthRouter(db))
     app.use('/api/groups', createGroupRouter(db))
     app.use('/api/members', createMemberRouter(db))
-    app.use('/api/activities', createActivityRouter(db)) // Add this line
+    app.use('/api/activities', createActivityRouter(db))
+    app.use('/api/meetings', createMeetingRouter(db)) // Add this line
 
     const PORT = process.env.PORT || 3000
     app.listen(PORT, () => {

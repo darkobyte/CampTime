@@ -82,6 +82,26 @@ export const initializeDatabase = async () => {
       stamm VARCHAR(255) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )`,
+    // Add meetings table
+    `CREATE TABLE IF NOT EXISTS meetings (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      group_id INT NOT NULL,
+      meeting_date DATE NOT NULL,
+      meeting_time TIME NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      stamm VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
+    )`,
+    `CREATE TABLE IF NOT EXISTS meeting_activities (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      meeting_id INT NOT NULL,
+      activity_id INT NOT NULL,
+      order_index INT NOT NULL,
+      FOREIGN KEY (meeting_id) REFERENCES meetings(id) ON DELETE CASCADE,
+      FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
     )`
   ]
 
