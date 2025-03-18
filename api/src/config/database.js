@@ -9,6 +9,7 @@ const dbConfig = {
 
 export const initializeDatabase = async () => {
   const schemas = [
+    // Users and tokens
     `CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
       firstName VARCHAR(255) NOT NULL,
@@ -27,6 +28,7 @@ export const initializeDatabase = async () => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`,
+    // Groups and members base tables
     `CREATE TABLE IF NOT EXISTS groups (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
@@ -37,6 +39,20 @@ export const initializeDatabase = async () => {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       UNIQUE KEY unique_group_stamm (name, stamm)
     )`,
+    `CREATE TABLE IF NOT EXISTS members (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      firstName VARCHAR(255) NOT NULL,
+      lastName VARCHAR(255) NOT NULL,
+      email VARCHAR(255),
+      phone VARCHAR(50),
+      group_id INT,
+      stamm VARCHAR(255) NOT NULL,
+      attendance INT DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE SET NULL
+    )`,
+    // Relationship tables
     `CREATE TABLE IF NOT EXISTS group_leaders (
       id INT AUTO_INCREMENT PRIMARY KEY,
       group_id INT NOT NULL,
@@ -47,11 +63,11 @@ export const initializeDatabase = async () => {
     `CREATE TABLE IF NOT EXISTS group_members (
       id INT AUTO_INCREMENT PRIMARY KEY,
       group_id INT NOT NULL,
-      user_id INT NOT NULL,
+      member_id INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      UNIQUE KEY unique_member (group_id, user_id)
+      FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+      UNIQUE KEY unique_member (group_id, member_id)
     )`
   ]
 

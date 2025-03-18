@@ -3,6 +3,7 @@ import cors from 'cors'
 import { initializeDatabase } from './src/config/database.js'
 import { createAuthRouter } from './src/routes/authRoutes.js'
 import { createGroupRouter } from './src/routes/groupRoutes.js'
+import { createMemberRouter } from './src/routes/memberRoutes.js'
 
 const app = express()
 
@@ -21,7 +22,8 @@ async function startServer() {
     
     // Routes
     app.use('/api/auth', createAuthRouter(db))
-    app.use('/api/groups', createGroupRouter(db)) // Add this line
+    app.use('/api/groups', createGroupRouter(db))
+    app.use('/api/members', createMemberRouter(db)) // Add this line
 
     const PORT = process.env.PORT || 3000
     app.listen(PORT, () => {
