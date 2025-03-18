@@ -68,6 +68,20 @@ export const initializeDatabase = async () => {
       FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
       FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
       UNIQUE KEY unique_member (group_id, member_id)
+    )`,
+    // Activities table
+    `CREATE TABLE IF NOT EXISTS activities (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      description TEXT,
+      duration INT NOT NULL,
+      category VARCHAR(50) NOT NULL,
+      materials JSON,
+      minParticipants INT,
+      maxParticipants INT,
+      stamm VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )`
   ]
 
