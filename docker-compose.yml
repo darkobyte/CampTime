@@ -1,0 +1,46 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: mydb
+    command: --default-authentication-plugin=mysql_native_password --ssl=0
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+
+  # api:
+  #   build: ./api
+  #   container_name: api
+  #   environment:
+  #     - DB_HOST=mariadb
+  #     - DB_USER=root
+  #     - DB_PASSWORD=root
+  #     - DB_NAME=mydb
+  #     - CORS_ORIGIN=http://localhost:5173
+  #     - CORS_CREDENTIALS=true
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./api:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - mariadb
+
+volumes:
+  mariadb_data:
