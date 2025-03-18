@@ -18,8 +18,10 @@ export const useAuthStore = defineStore('auth', () => {
         })
 
         if (response.ok) {
-          user.value = await response.json()
+          const userData = await response.json()
+          user.value = { ...userData, token } // Include token in user object
           isAuthenticated.value = true
+          console.log('Token validation successful:', token)
           return true
         } else {
           localStorage.removeItem('token')
@@ -46,6 +48,9 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = userData
       isAuthenticated.value = true
       localStorage.setItem('token', userData.token)
+      // Add token to user object
+      user.value.token = userData.token
+      console.log('Login successful, token set:', userData.token)
       return true
     } catch (error) {
       console.error('Login error:', error)
@@ -63,9 +68,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (!response.ok) throw new Error('Registration failed')
 
-      user.value = await response.json()
-      isAuthenticated.value = true
-      return true
+      // After registration, automatically log in
+      return await login(userData.email, userData.password)
     } catch (error) {
       console.error('Registration error:', error)
       return false

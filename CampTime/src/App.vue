@@ -9,7 +9,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 onMounted(async () => {
-  await authStore.init()
+  const success = await authStore.init()
+  console.log('Auth init completed:', success, authStore.user) // Debug line
 })
 
 watch(() => authStore.isAuthenticated, (isAuthenticated) => {

@@ -70,25 +70,23 @@ export class AuthService {
   }
 
   async validateToken(token) {
+    if (!token) {
+      throw new Error('Token is required')
+    }
+
     const [rows] = await this.db.query(`
       SELECT u.id, u.firstName, u.lastName, u.email, u.stamm, t.expires_at
       FROM users u
       JOIN tokens t ON u.id = t.user_id
       WHERE t.token = ?
+      AND t.expires_at > NOW()
     `, [token])
 
     if (rows.length === 0) {
-      throw new Error('Invalid token')
+      throw new Error('Invalid or expired token')
     }
 
     const user = rows[0]
-    const tokenExpiry = new Date(user.expires_at)
-
-    if (tokenExpiry < new Date()) {
-      await this.db.query('DELETE FROM tokens WHERE token = ?', [token])
-      throw new Error('Token expired')
-    }
-
     delete user.expires_at
     return user
   }
