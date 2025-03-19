@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useAuthStore } from './auth'
+import { API_BASE_URL } from '../config'
 
 export const useMemberStore = defineStore('members', () => {
   const members = ref([])
@@ -14,7 +15,7 @@ export const useMemberStore = defineStore('members', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/members', {
+      const response = await fetch(`${API_BASE_URL}/members`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -37,7 +38,7 @@ export const useMemberStore = defineStore('members', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/members', {
+      const response = await fetch(`${API_BASE_URL}/members`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -64,7 +65,7 @@ export const useMemberStore = defineStore('members', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch(`http://localhost:3000/api/members/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/members/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -93,7 +94,7 @@ export const useMemberStore = defineStore('members', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch(`http://localhost:3000/api/members/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/members/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

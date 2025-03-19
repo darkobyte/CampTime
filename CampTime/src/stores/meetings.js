@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { API_BASE_URL } from '../config'
 
 export const useMeetingStore = defineStore('meetings', () => {
   const meetings = ref([])
@@ -12,7 +13,7 @@ export const useMeetingStore = defineStore('meetings', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/meetings', {
+      const response = await fetch(`${API_BASE_URL}/meetings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -35,7 +36,7 @@ export const useMeetingStore = defineStore('meetings', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/meetings', {
+      const response = await fetch(`${API_BASE_URL}/meetings`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -62,7 +63,7 @@ export const useMeetingStore = defineStore('meetings', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/meetings/activity', {
+      const response = await fetch(`${API_BASE_URL}/meetings/activity`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -72,7 +73,7 @@ export const useMeetingStore = defineStore('meetings', () => {
       })
 
       if (!response.ok) throw new Error('Failed to add activity')
-      
+
       const { meetingId: updatedMeetingId } = await response.json()
       await fetchUpcomingMeetings() // Refresh meetings list
       return updatedMeetingId

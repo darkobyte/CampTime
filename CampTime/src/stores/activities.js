@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { API_BASE_URL } from '../config'
 
 export const useActivityStore = defineStore('activities', () => {
   const activities = ref([])
@@ -12,7 +13,7 @@ export const useActivityStore = defineStore('activities', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/activities', {
+      const response = await fetch(`${API_BASE_URL}/activities`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -35,7 +36,7 @@ export const useActivityStore = defineStore('activities', () => {
     const token = localStorage.getItem('token')
 
     try {
-      const response = await fetch('http://localhost:3000/api/activities', {
+      const response = await fetch(`${API_BASE_URL}/activities`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -61,15 +62,15 @@ export const useActivityStore = defineStore('activities', () => {
     loading.value = true
     error.value = null
     const token = localStorage.getItem('token')
-      
+
     try {
-      const response = await fetch(`http://localhost:3000/api/activities/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         }
       })
-  
+
       if (!response.ok) throw new Error('Failed to fetch activity')
       return await response.json()
     } catch (err) {
@@ -80,14 +81,14 @@ export const useActivityStore = defineStore('activities', () => {
       loading.value = false
     }
   }
-  
+
   const updateActivity = async (id, activityData) => {
     loading.value = true
     error.value = null
     const token = localStorage.getItem('token')
-      
+
     try {
-      const response = await fetch(`http://localhost:3000/api/activities/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -95,9 +96,9 @@ export const useActivityStore = defineStore('activities', () => {
         },
         body: JSON.stringify(activityData)
       })
-  
+
       if (!response.ok) throw new Error('Failed to update activity')
-      
+
       const updatedActivity = await response.json()
       const index = activities.value.findIndex(a => a.id === id)
       if (index !== -1) {
@@ -117,15 +118,15 @@ export const useActivityStore = defineStore('activities', () => {
     loading.value = true
     error.value = null
     const token = localStorage.getItem('token')
-      
+
     try {
-      const response = await fetch(`http://localhost:3000/api/activities/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-  
+
       if (!response.ok) throw new Error('Failed to delete activity')
       activities.value = activities.value.filter(a => a.id !== id)
       return true
