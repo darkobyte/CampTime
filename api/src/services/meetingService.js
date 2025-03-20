@@ -228,4 +228,24 @@ export class MeetingService {
       [meetingId, stamm]
     )
   }
+
+  async createMeeting(meetingData) {
+    try {
+      await this.db.query('START TRANSACTION')
+      
+      // Create new meeting
+      const [result] = await this.db.query(
+        `INSERT INTO meetings (group_id, meeting_date, meeting_time, title, stamm)
+         VALUES (?, ?, ?, ?, ?)`,
+        [meetingData.group_id, meetingData.meeting_date, meetingData.meeting_time, 
+         meetingData.title, meetingData.stamm]
+      )
+
+      await this.db.query('COMMIT')
+      return { id: result.insertId, ...meetingData }
+    } catch (error) {
+      await this.db.query('ROLLBACK')
+      throw error
+    }
+  }
 }
