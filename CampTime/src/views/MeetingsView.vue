@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useMeetingStore } from '../stores/meetings'
 import { useActivityStore } from '../stores/activities'
 import { useGroupStore } from '../stores/groups'
@@ -16,6 +16,37 @@ const newMeeting = ref({
   title: '',
   activities: []
 })
+
+const selectedGroup = ref('all')
+const selectedDate = ref(new Date().toISOString().split('T')[0])
+
+const navigateDate = (days) => {
+  const date = new Date(selectedDate.value)
+  date.setDate(date.getDate() + days)
+  selectedDate.value = date.toISOString().split('T')[0]
+}
+
+const filteredMeetings = computed(() => {
+  let filtered = meetingStore.meetings
+  
+  if (selectedGroup.value !== 'all') {
+    filtered = filtered.filter(meeting => meeting.group_id.toString() === selectedGroup.value)
+  }
+  
+  // Sortiere nach Datum und filtere ab dem ausgewählten Datum
+  return filtered
+    .filter(meeting => meeting.meeting_date >= selectedDate.value)
+    .sort((a, b) => {
+      const dateA = new Date(`${a.meeting_date}T${a.meeting_time}`)
+      const dateB = new Date(`${b.meeting_date}T${b.meeting_time}`)
+      return dateA - dateB
+    })
+    .slice(0, 8) // Nur die nächsten 8 Meetings
+})
+
+const resetDate = () => {
+  selectedDate.value = new Date().toISOString().split('T')[0]
+}
 
 onMounted(async () => {
   await Promise.all([
@@ -77,14 +108,42 @@ const handleDragStart = (e, activity) => {
     </div>
 
     <div class="meetings-content">
-      <h2>Gruppenstunden</h2>
+      <div class="meetings-header">
+        <h2>Gruppenstunden</h2>
+        <div class="filters">
+          <select v-model="selectedGroup" class="group-filter">
+            <option value="all">Alle Gruppen</option>
+            <option 
+              v-for="group in groupStore.groups" 
+              :key="group.id" 
+              :value="group.id.toString()"
+            >
+              {{ group.name }}
+            </option>
+          </select>
+          
+          <div class="date-filter">
+            <button @click="navigateDate(-1)" class="nav-button">&lt;</button>
+            <input 
+              type="date" 
+              v-model="selectedDate" 
+              class="date-input"
+            >
+            <button @click="navigateDate(1)" class="nav-button">&gt;</button>
+            <button @click="resetDate" class="today-button">Heute</button>
+          </div>
+        </div>
+      </div>
       
       <div v-if="meetingStore.loading" class="loading">
         Lade Gruppenstunden...
       </div>
+      <div v-else-if="filteredMeetings.length === 0" class="no-meetings">
+        Keine Gruppenstunden ab diesem Datum gefunden
+      </div>
       <div v-else class="meetings-list">
         <div 
-          v-for="meeting in meetingStore.meetings" 
+          v-for="meeting in filteredMeetings" 
           :key="meeting.id"
           class="meeting-card"
           :class="{ 'is-calculated': meeting.isCalculated }"
@@ -233,5 +292,69 @@ const handleDragStart = (e, activity) => {
   text-align: center;
   color: var(--color-text);
   opacity: 0.5;
+}
+
+.group-filter {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  min-width: 200px;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.date-filter {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.date-input {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.nav-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background: var(--color-border);
+}
+
+.today-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: white;
+  cursor: pointer;
+}
+
+.today-button:hover {
+  opacity: 0.9;
+}
+
+.no-meetings {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-text);
+  opacity: 0.7;
+  background: var(--color-background);
+  border-radius: 4px;
+  margin: 1rem 0;
 }
 </style>

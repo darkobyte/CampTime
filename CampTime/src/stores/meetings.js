@@ -21,7 +21,15 @@ export const useMeetingStore = defineStore('meetings', () => {
       })
 
       if (!response.ok) throw new Error('Failed to fetch meetings')
-      meetings.value = await response.json()
+      const data = await response.json()
+      
+      // Formatiere das Datum in YYYY-MM-DD
+      meetings.value = data.map(meeting => ({
+        ...meeting,
+        meeting_date: new Date(meeting.meeting_date).toISOString().split('T')[0]
+      }))
+      
+      console.log('Formatted meetings:', meetings.value)
     } catch (err) {
       error.value = err.message
       console.error('Error fetching meetings:', err)
