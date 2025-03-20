@@ -93,12 +93,63 @@ export const useMeetingStore = defineStore('meetings', () => {
     }
   }
 
+  const cancelMeeting = async (meetingId) => {
+    loading.value = true
+    error.value = null
+    const token = localStorage.getItem('token')
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/meetings/${meetingId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) throw new Error('Failed to cancel meeting')
+      await fetchUpcomingMeetings()
+      return true
+    } catch (err) {
+      error.value = err.message
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const clearActivities = async (meetingId) => {
+    loading.value = true
+    error.value = null
+    const token = localStorage.getItem('token')
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/meetings/${meetingId}/activities`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) throw new Error('Failed to clear activities')
+      await fetchUpcomingMeetings()
+      return true
+    } catch (err) {
+      error.value = err.message
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     meetings,
     loading,
     error,
     fetchUpcomingMeetings,
     createMeeting,
-    addActivityToMeeting
+    addActivityToMeeting,
+    cancelMeeting,
+    clearActivities
   }
 })

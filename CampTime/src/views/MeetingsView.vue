@@ -86,6 +86,14 @@ const handleDrop = async (e, meetingId) => {
 const handleDragStart = (e, activity) => {
   e.dataTransfer.setData('activity', activity.id)
 }
+
+const handleClearActivities = async (meetingId) => {
+  await meetingStore.clearActivities(meetingId)
+}
+
+const handleCancelMeeting = async (meeting) => {
+  await meetingStore.cancelMeeting(meeting.id)
+}
 </script>
 
 <template>
@@ -146,27 +154,49 @@ const handleDragStart = (e, activity) => {
           v-for="meeting in filteredMeetings" 
           :key="meeting.id"
           class="meeting-card"
-          :class="{ 'is-calculated': meeting.isCalculated }"
+          :class="{ 
+            'is-calculated': meeting.isCalculated,
+            'is-cancelled': meeting.is_cancelled 
+          }"
           @drop="handleDrop($event, meeting.id)"
           @dragover.prevent
+          @dragenter.prevent
         >
           <div class="meeting-header">
-            <h3>{{ meeting.title }}</h3>
-            <p>{{ formatDateTime(meeting.meeting_date, meeting.meeting_time) }}</p>
-            <span class="group-tag">{{ meeting.groupName }}</span>
+            <div class="meeting-info">
+              <h3>{{ meeting.title }}</h3>
+              <p>{{ formatDateTime(meeting.meeting_date, meeting.meeting_time) }}</p>
+              <span class="group-tag">{{ meeting.groupName }}</span>
+            </div>
+            <div class="meeting-actions">
+              <button 
+                @click="handleClearActivities(meeting.id)"
+                class="clear-button"
+              >
+                🗑️ Clear
+              </button>
+              <button 
+                @click="handleCancelMeeting(meeting)"
+                :class="['cancel-button', { 'is-cancelled': meeting.is_cancelled }]"
+              >
+                {{ meeting.is_cancelled ? '✓ Abgesagt' : '❌ Absagen' }}
+              </button>
+            </div>
           </div>
           <div class="meeting-activities">
-            <div v-if="meeting.activities.length === 0" class="empty-activities">
+            <div v-if="!meeting.activities || meeting.activities.length === 0" class="empty-activities">
               Aktivitäten hier ablegen
             </div>
-            <div 
-              v-for="activity in meeting.activities" 
-              :key="activity.id"
-              class="meeting-activity"
-            >
-              <span>{{ activity.name }}</span>
-              <span>{{ activity.duration }} Min</span>
-            </div>
+            <template v-else>
+              <div 
+                v-for="activity in meeting.activities" 
+                :key="activity.id"
+                class="meeting-activity"
+              >
+                <span>{{ activity.name }}</span>
+                <span>{{ activity.duration }} Min</span>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -356,5 +386,118 @@ const handleDragStart = (e, activity) => {
   background: var(--color-background);
   border-radius: 4px;
   margin: 1rem 0;
+}
+
+.meeting-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.clear-button, .cancel-button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.clear-button:hover {
+  background: var(--color-border);
+}
+
+.cancel-button:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+.meeting-card.is-cancelled {
+  opacity: 0.6;
+  background: var(--color-background);
+  position: relative;
+  pointer-events: auto; 
+}
+
+.meeting-card.is-cancelled::after {
+  content: "ABGESAGT";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  font-size: 2rem;
+  color: var(--color-danger);
+  border: 3px solid var(--color-danger);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.meeting-card.is-cancelled .meeting-activities {
+  pointer-events: none;
+}
+
+/* Cancelled meeting styles */
+.meeting-card[class~="is-cancelled"] {
+  opacity: 0.6;
+  background: var(--color-background);
+  position: relative;
+  pointer-events: auto;
+}
+
+.meeting-card[class~="is-cancelled"]::after {
+  content: "ABGESAGT";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  font-size: 2rem;
+  color: var(--color-danger);
+  border: 3px solid var(--color-danger);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.meeting-card[class~="is-cancelled"] .meeting-activities {
+  pointer-events: none;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.meeting-info {
+  flex: 1;
+}
+
+.meeting-actions {
+  margin-left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-self: flex-start;
+}
+
+.clear-button, .cancel-button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.cancel-button.is-cancelled {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+/* Remove these styles since we don't want any disabled states */
+[disabled] {
+  display: none;
 }
 </style>

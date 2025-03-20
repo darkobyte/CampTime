@@ -97,6 +97,7 @@ export const initializeDatabase = async () => {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
     )`,
+    `ALTER TABLE meetings ADD COLUMN IF NOT EXISTS is_cancelled BOOLEAN DEFAULT FALSE`,
     `CREATE TABLE IF NOT EXISTS meeting_activities (
       id INT AUTO_INCREMENT PRIMARY KEY,
       meeting_id INT NOT NULL,

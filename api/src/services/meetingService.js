@@ -10,11 +10,12 @@ export class MeetingService {
       [stamm]
     )
 
-    // Get saved meetings with activities
+    // Get saved meetings with activities - Entferne den CURDATE() Filter
     const [savedMeetings] = await this.db.query(
       `SELECT m.*, g.name as groupName, 
         DATE_FORMAT(m.meeting_date, '%Y-%m-%d') as meeting_date,
         TIME_FORMAT(m.meeting_time, '%H:%i') as meeting_time,
+        m.is_cancelled,
         GROUP_CONCAT(
           JSON_OBJECT(
             'id', a.id,
@@ -27,7 +28,6 @@ export class MeetingService {
        LEFT JOIN meeting_activities ma ON m.id = ma.meeting_id
        LEFT JOIN activities a ON ma.activity_id = a.id
        WHERE m.stamm = ? 
-       AND m.meeting_date >= CURDATE()
        GROUP BY m.id`,
       [stamm]
     )
@@ -36,9 +36,26 @@ export class MeetingService {
     const savedMeetingsMap = new Map()
     savedMeetings.forEach(meeting => {
       const key = `${meeting.group_id}_${meeting.meeting_date}`
+      let parsedActivities = []
+      
+      if (meeting.activities) {
+        try {
+          // Wenn activities ein einzelner String ist, machen wir ein Array daraus
+          const activitiesStr = meeting.activities.includes('},{') ? 
+            `[${meeting.activities}]` : 
+            `[${meeting.activities || ''}]`
+          
+          parsedActivities = JSON.parse(activitiesStr)
+            .filter(a => a && Object.keys(a).length > 0)
+        } catch (err) {
+          console.error('Error parsing activities:', err)
+          parsedActivities = []
+        }
+      }
+
       savedMeetingsMap.set(key, {
         ...meeting,
-        activities: meeting.activities ? JSON.parse(`[${meeting.activities}]`) : [],
+        activities: parsedActivities,
         isCalculated: false
       })
     })
@@ -159,5 +176,56 @@ export class MeetingService {
       await this.db.query('ROLLBACK')
       throw error
     }
+  }
+
+  async cancelMeeting(meetingId, stamm) {
+    try {
+      await this.db.query('START TRANSACTION')
+
+      // Wenn es eine berechnete Gruppenstunde ist, erstelle sie zuerst
+      if (typeof meetingId === 'string' && meetingId.startsWith('calc_')) {
+        const [_, groupId, dateStr] = meetingId.split('_')
+        const date = dateStr.split('T')[0]
+        
+        // Get group details
+        const [groups] = await this.db.query(
+          'SELECT name, meetingTime FROM groups WHERE id = ? AND stamm = ?',
+          [groupId, stamm]
+        )
+        const group = groups[0]
+        const meetingTime = JSON.parse(group.meetingTime)
+
+        // Create new meeting
+        const [result] = await this.db.query(
+          `INSERT INTO meetings (group_id, meeting_date, meeting_time, title, stamm, is_cancelled)
+           VALUES (?, ?, ?, ?, ?, 1)`,
+          [groupId, date, meetingTime.time, `${group.name} Gruppenstunde`, stamm]
+        )
+        meetingId = result.insertId
+      } else {
+        // Toggle is_cancelled für existierende Meetings
+        const [result] = await this.db.query(
+          'UPDATE meetings SET is_cancelled = NOT is_cancelled WHERE id = ? AND stamm = ?',
+          [meetingId, stamm]
+        )
+        
+        if (result.affectedRows === 0) {
+          throw new Error('Meeting not found')
+        }
+      }
+
+      await this.db.query('COMMIT')
+      return meetingId
+    } catch (error) {
+      await this.db.query('ROLLBACK')
+      throw error
+    }
+  }
+
+  async clearActivities(meetingId, stamm) {
+    await this.db.query(
+      'DELETE ma FROM meeting_activities ma JOIN meetings m ON ma.meeting_id = m.id WHERE m.id = ? AND m.stamm = ?',
+      [meetingId, stamm]
+    )
   }
 }

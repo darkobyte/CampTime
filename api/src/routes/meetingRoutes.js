@@ -11,6 +11,8 @@ export const createMeetingRouter = (db) => {
   router.get('/', meetingController.getUpcomingMeetings)
   router.post('/', meetingController.createMeeting)
   router.post('/activity', meetingController.addActivity)
+  router.post('/:id/cancel', meetingController.cancelMeeting)
+  router.delete('/:id/activities', meetingController.clearActivities)
 
   return router
 }

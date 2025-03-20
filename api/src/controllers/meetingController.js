@@ -38,4 +38,28 @@ export class MeetingController {
       res.status(500).json({ error: 'Failed to add activity' })
     }
   }
+
+  cancelMeeting = async (req, res) => {
+    try {
+      const meetingId = req.params.id
+      const stamm = req.user.stamm
+      await this.meetingService.cancelMeeting(meetingId, stamm)
+      res.status(200).json({ message: 'Meeting cancelled successfully' })
+    } catch (error) {
+      console.error('Error cancelling meeting:', error)
+      res.status(500).json({ error: 'Failed to cancel meeting' })
+    }
+  }
+
+  clearActivities = async (req, res) => {
+    try {
+      const meetingId = req.params.id
+      const stamm = req.user.stamm
+      await this.meetingService.clearActivities(meetingId, stamm)
+      res.status(200).json({ message: 'Activities cleared successfully' })
+    } catch (error) {
+      console.error('Error clearing activities:', error)
+      res.status(500).json({ error: 'Failed to clear activities' })
+    }
+  }
 }
