@@ -1,14 +1,19 @@
 :root {
-  --color-primary: #2b5797;
-  --color-secondary: #5b9bd5;
-  --color-accent: #70ad47;
-  --color-warning: #ffd700;
-  --color-danger: #e74c3c;
-  --color-text: #2c3e50;
-  --color-text-light: #ffffff;
-  --color-background: #f5f5f5;
-  --color-surface: #ffffff;
-  --color-border: #dcdfe6;
+  --color-primary: #1e3a5f; /* Deep navy blue */
+  --color-secondary: #4a90e2; /* Bright sky blue */
+  --color-accent: #2ecc71; /* Vibrant green */
+  --color-warning: #f39c12; /* Scout orange */
+  --color-danger: #c0392b; /* Deep red */
+  --color-text: #34495e; /* Dark slate gray */
+  --color-text-light: #ecf0f1; /* Light grayish white */
+  --color-background: #eaf2f8; /* Soft blue-gray */
+  --color-surface: #ffffff; /* Pure white */
+  --color-border: #bdc3c7; /* Light gray */
+  --color-campfire: #d35400; /* Campfire orange */
+  --color-forest: #27ae60; /* Forest green */
+  --color-sky: #3498db; /* Clear sky blue */
+  --color-earth: #8e44ad; /* Earthy purple */
+  --color-sunrise: #e67e22; /* Sunrise orange */
 }
 
 :root {
