@@ -6,7 +6,7 @@ export class MeetingService {
   async getUpcomingMeetings(stamm) {
     // First get all groups with their meeting times
     const [groups] = await this.db.query(
-      'SELECT id, name, meetingTime FROM groups WHERE stamm = ?',
+      'SELECT id, name, meetingTime, start_date, end_date FROM groups WHERE stamm = ?',
       [stamm]
     )
 
@@ -52,10 +52,19 @@ export class MeetingService {
       if (!meetingTime || !meetingTime.weekday) continue
 
       const frequency = parseInt(meetingTime.frequency) || 1
-      let date = this.getNextWeekday(today, parseInt(meetingTime.weekday))
+      let date = new Date(group.start_date)
+      if (date < today) {
+        date = this.getNextWeekday(today, parseInt(meetingTime.weekday))
+      } else {
+        date = this.getNextWeekday(date, parseInt(meetingTime.weekday))
+      }
+
       let count = 0
+      const endDate = group.end_date ? new Date(group.end_date) : null
 
       while (count < 8) {
+        if (endDate && date > endDate) break
+        
         const dateStr = date.toISOString().split('T')[0]
         const key = `${group.id}_${dateStr}`
 

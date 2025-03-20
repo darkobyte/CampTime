@@ -15,6 +15,8 @@ const newGroup = ref({
     time: '',
     frequency: '1' // '1' for weekly, '2' for bi-weekly
   },
+  start_date: '',
+  end_date: '',
   leaders: [{ firstName: '', lastName: '' }]
 })
 
@@ -52,6 +54,8 @@ const handleSubmit = async () => {
         time: '',
         frequency: '1'
       },
+      start_date: '',
+      end_date: '',
       leaders: [{ firstName: '', lastName: '' }]
     }
   }
@@ -109,6 +113,26 @@ onMounted(() => {
         <div class="meeting-time-section">
           <h3>Treffzeit</h3>
           <div class="meeting-time-inputs">
+            <div class="form-group">
+              <label for="start_date">Startdatum</label>
+              <input 
+                type="date" 
+                v-model="newGroup.start_date"
+                id="start_date" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="end_date">Enddatum (optional)</label>
+              <input 
+                type="date" 
+                v-model="newGroup.end_date"
+                id="end_date"
+                :min="newGroup.start_date"
+              >
+            </div>
+
             <div class="form-group">
               <label for="weekday">Wochentag</label>
               <select v-model="newGroup.meetingTime.weekday" id="weekday" required>

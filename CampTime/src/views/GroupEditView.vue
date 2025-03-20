@@ -62,6 +62,26 @@ const handleSubmit = async () => {
         <h3>Treffzeit</h3>
         <div class="meeting-time-inputs">
           <div class="form-group">
+            <label for="start_date">Startdatum</label>
+            <input 
+              type="date" 
+              v-model="group.start_date"
+              id="start_date" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="end_date">Enddatum (optional)</label>
+            <input 
+              type="date" 
+              v-model="group.end_date"
+              id="end_date"
+              :min="group.start_date"
+            >
+          </div>
+
+          <div class="form-group">
             <label for="weekday">Wochentag</label>
             <select v-model="group.meetingTime.weekday" id="weekday" required>
               <option v-for="day in weekdays" :key="day.value" :value="day.value">

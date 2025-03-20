@@ -55,14 +55,14 @@ export class GroupService {
   }
 
   async createGroup(groupData) {
-    const { name, description, meetingTime, stamm, leaders } = groupData
+    const { name, description, meetingTime, stamm, leaders, start_date, end_date } = groupData
 
     try {
       await this.db.query('START TRANSACTION')
 
       const [result] = await this.db.query(
-        'INSERT INTO groups (name, description, meetingTime, stamm) VALUES (?, ?, ?, ?)',
-        [name, description, JSON.stringify(meetingTime), stamm]
+        'INSERT INTO groups (name, description, meetingTime, stamm, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)',
+        [name, description, JSON.stringify(meetingTime), stamm, start_date, end_date || null]
       )
 
       const groupId = result.insertId
@@ -83,7 +83,7 @@ export class GroupService {
   }
 
   async updateGroup(id, groupData, stamm) {
-    const { name, description, meetingTime, leaders } = groupData
+    const { name, description, meetingTime, leaders, start_date, end_date } = groupData
 
     try {
       await this.db.query('START TRANSACTION')
@@ -100,8 +100,8 @@ export class GroupService {
 
       // Update group details
       await this.db.query(
-        'UPDATE groups SET name = ?, description = ?, meetingTime = ? WHERE id = ?',
-        [name, description, JSON.stringify(meetingTime), id]
+        'UPDATE groups SET name = ?, description = ?, meetingTime = ?, start_date = ?, end_date = ? WHERE id = ?',
+        [name, description, JSON.stringify(meetingTime), start_date, end_date || null, id]
       )
 
       // Delete existing leaders
