@@ -1,0 +1,83 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: mydb
+    command: --default-authentication-plugin=mysql_native_password --ssl=0
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+
+  app:
+    build: 
+      context: ./CampTime
+      dockerfile: Dockerfile
+    container_name: app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.toshort.de`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls=true"
+      - "traefik.http.routers.app.tls.certresolver=leresolver"
+      - "traefik.http.services.app.loadbalancer.server.port=80"
+    networks:
+      - traefik
+    depends_on:
+      - api
+
+  api:
+    build: ./api
+    container_name: api
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=mydb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.api.rule=Host(`api.toshort.de`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.tls.certresolver=leresolver"
+      - "traefik.http.services.api.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=POST, GET, PATCH, OPTIONS, DELETE, PUT"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type, Authorization"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://app.toshort.de"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=1728000"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+      - "traefik.http.routers.api.middlewares=cors@docker"
+    networks:
+      - traefik
+      - default
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    depends_on:
+      - mariadb
+
+networks:
+  traefik:
+    external: true
+  default:
+    driver: bridge
+
+volumes:
+  mariadb_data:

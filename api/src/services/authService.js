@@ -18,10 +18,10 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Create user with null stamm
     const [result] = await this.db.query(
       'INSERT INTO users (firstName, lastName, email, password, stamm) VALUES (?, ?, ?, ?, ?)',
-      [firstName, lastName, email, hashedPassword, stamm]
+      [firstName, lastName, email, hashedPassword, null]
     )
 
     return {
@@ -29,7 +29,7 @@ export class AuthService {
       firstName,
       lastName,
       email,
-      stamm
+      stamm: null
     }
   }
 

@@ -1,13 +1,16 @@
 import { Router } from 'express'
 import { MeetingController } from '../controllers/meetingController.js'
 import { authMiddleware } from '../middleware/auth.js'
+import { stammAuthMiddleware } from '../middleware/stammAuth.js'
 
 export const createMeetingRouter = (db) => {
   const router = Router()
   const meetingController = new MeetingController(db)
   const auth = authMiddleware(db)
+  const stammAuth = stammAuthMiddleware(db)
 
   router.use(auth)
+  router.use(stammAuth)  // Add after auth middleware
   router.get('/', meetingController.getUpcomingMeetings)
   router.post('/', meetingController.createMeeting)
   router.post('/activity', meetingController.addActivity)

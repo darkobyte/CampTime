@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import ErrorView from '../views/ErrorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,12 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: () => import('@/views/RegisterView.vue')
+    },
+    {
+      path: '/error',
+      name: 'error',
+      component: ErrorView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/dashboard',

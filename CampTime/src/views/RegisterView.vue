@@ -11,7 +11,6 @@ const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const stamm = ref('')
 const errorMessage = ref('')
 
 const handleRegister = async () => {
@@ -26,7 +25,7 @@ const handleRegister = async () => {
     lastName: lastName.value,
     email: email.value,
     password: password.value,
-    stamm: stamm.value
+    stamm: null  // Set stamm to null by default
   })
 
   if (success) {
@@ -45,62 +44,53 @@ const handleRegister = async () => {
       <form @submit.prevent="handleRegister">
         <div class="form-group">
           <label for="firstName">Vorname</label>
-          <input 
-            type="text" 
-            id="firstName" 
-            v-model="firstName" 
+          <input
+            type="text"
+            id="firstName"
+            v-model="firstName"
             required
           >
         </div>
         <div class="form-group">
           <label for="lastName">Nachname</label>
-          <input 
-            type="text" 
-            id="lastName" 
-            v-model="lastName" 
+          <input
+            type="text"
+            id="lastName"
+            v-model="lastName"
             required
           >
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input 
-            type="email" 
-            id="email" 
-            v-model="email" 
+          <input
+            type="email"
+            id="email"
+            v-model="email"
             required
           >
         </div>
         <div class="form-group">
           <label for="password">Passwort</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="password" 
+          <input
+            type="password"
+            id="password"
+            v-model="password"
             required
           >
         </div>
         <div class="form-group">
           <label for="confirmPassword">Passwort bestätigen</label>
-          <input 
-            type="password" 
-            id="confirmPassword" 
-            v-model="confirmPassword" 
-            required
-          >
-        </div>
-        <div class="form-group">
-          <label for="stamm">Stamm</label>
-          <input 
-            type="text" 
-            id="stamm" 
-            v-model="stamm" 
+          <input
+            type="password"
+            id="confirmPassword"
+            v-model="confirmPassword"
             required
           >
         </div>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <button type="submit">Registrieren</button>
         <p class="switch-text">
-          Bereits ein Konto? 
+          Bereits ein Konto?
           <RouterLink to="/">Anmelden</RouterLink>
         </p>
       </form>

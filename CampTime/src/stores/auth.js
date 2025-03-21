@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config'
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
   const user = ref(null)
+  const showStammWarning = ref(false)
 
   async function init() {
     const token = localStorage.getItem('token')
@@ -20,6 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
           const userData = await response.json()
           user.value = { ...userData, token } // Include token in user object
           isAuthenticated.value = true
+          showStammWarning.value = !userData.stamm
           console.log('Token validation successful:', token)
           return true
         } else {
@@ -96,6 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     isAuthenticated,
     user,
+    showStammWarning,
     init,
     login,
     logout,
