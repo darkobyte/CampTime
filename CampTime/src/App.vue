@@ -47,6 +47,7 @@ watch(() => authStore.user?.stamm, (stamm) => {
   <div class="app-container">
     <header v-if="showNavigation">
       <nav>
+        <h1 style="color: wheat;">{{ authStore.user?.stamm }}</h1>
         <RouterLink to="/dashboard">Dashboard</RouterLink>
         <RouterLink to="/groups">Gruppen</RouterLink>
         <RouterLink to="/meetings">Gruppenstunden</RouterLink>
