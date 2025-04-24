@@ -16,16 +16,17 @@ const camps = ref([
 
 const tabs = ref(['Übersicht', 'Küchenplan', 'Programm', 'Teilnehmer'])
 const activeTab = ref('Übersicht')
+const selectedCamp = ref(null) // Track the selected camp
 </script>
 
 <template>
   <div class="camps-container">
-    <div class="camps-header">
+    <div class="members-header">
       <h1>Lager</h1>
-      <button class="add-button">Neues Lager</button>
+      <button class="add-button" @click="selectedCamp = null">Neues Lager</button>
     </div>
 
-    <div class="camp-tabs">
+    <div v-if="selectedCamp" class="camp-tabs">
       <button 
         v-for="tab in tabs" 
         :key="tab"
@@ -37,7 +38,7 @@ const activeTab = ref('Übersicht')
     </div>
 
     <div class="camps-content">
-      <div v-for="camp in camps" :key="camp.id" class="camp-card">
+      <div v-for="camp in camps" :key="camp.id" class="camp-card" @click="selectedCamp = camp">
         <div class="camp-header">
           <h2>{{ camp.title }}</h2>
           <span :class="['status-badge', camp.status.toLowerCase()]">
@@ -66,6 +67,24 @@ const activeTab = ref('Übersicht')
   padding: 1rem;
 }
 
+.members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.add-button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem; /* Adjusted size */
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+
 .camp-tabs {
   display: flex;
   gap: 1rem;
@@ -91,6 +110,7 @@ const activeTab = ref('Übersicht')
   border-radius: 8px;
   margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .status-badge {

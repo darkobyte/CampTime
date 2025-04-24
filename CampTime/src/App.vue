@@ -53,7 +53,7 @@ watch(() => authStore.user?.stamm, (stamm) => {
         <RouterLink to="/meetings">Gruppenstunden</RouterLink>
         <RouterLink to="/activities">Aktivitäten</RouterLink>
         <RouterLink to="/members">Mitglieder</RouterLink>
-        <!-- <RouterLink to="/camps">Lager</RouterLink> -->
+        <RouterLink to="/camps">Lager</RouterLink>
         <RouterLink to="/how-to">How To</RouterLink>
       </nav>
     </header>
