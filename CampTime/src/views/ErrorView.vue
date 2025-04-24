@@ -1,8 +1,5 @@
 <template>
   <div class="error-container">
-    <div class="error-content">
-      <h1>Zugriff eingeschränkt</h1>
-    </div>
   </div>
 </template>
 
@@ -11,7 +8,6 @@
 
 <style scoped>
 .error-container {
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -108,6 +108,7 @@ const formatDateTime = (date, time) => {
 
 <style scoped>
 .dashboard-grid {
+  padding: 1em;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;

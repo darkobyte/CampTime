@@ -54,6 +54,7 @@ watch(() => authStore.user?.stamm, (stamm) => {
         <RouterLink to="/activities">Aktivitäten</RouterLink>
         <RouterLink to="/members">Mitglieder</RouterLink>
         <!-- <RouterLink to="/camps">Lager</RouterLink> -->
+        <RouterLink to="/how-to">How To</RouterLink>
       </nav>
     </header>
 
@@ -63,8 +64,10 @@ watch(() => authStore.user?.stamm, (stamm) => {
 
     <div v-if="authStore.showStammWarning" class="stamm-warning-overlay">
       <div class="stamm-warning-modal">
-        <h2>Kein Stamm zugewiesen</h2>
-        <p>Ihr Konto wurde erfolgreich erstellt, aber es wurde noch kein Stamm zugewiesen. Bitte kontaktieren Sie einen Administrator, um Zugang zu erhalten.</p>
+        <h2>Kein Stamm zugewiesen!</h2>
+        <p>
+          Konto erstellt, kein Stamm zugewiesen. <br> Bitte warten oder Admin kontaktieren.
+        </p>
         <button @click="authStore.logout">Abmelden</button>
       </div>
     </div>
@@ -106,7 +109,6 @@ nav a.router-link-active {
 }
 
 main {
-  padding:  2em;
   flex: 1;
   background-color: var(--color-background);
 }

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import ErrorView from '../views/ErrorView.vue'
+import HowTo from '../components/HowTo.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -80,6 +81,11 @@ const router = createRouter({
       name: 'camps',
       component: () => import('@/views/CampsView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/how-to',
+      name: 'how-to',
+      component: HowTo
     }
   ]
 })

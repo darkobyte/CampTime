@@ -89,6 +89,9 @@ const handleRegister = async () => {
         </div>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <button type="submit">Registrieren</button>
+        <p class="info-message" style="text-align: center;">
+          Die Registrierung kann einen Moment dauern. Bitte haben Sie Geduld.
+        </p>
         <p class="switch-text">
           Bereits ein Konto?
           <RouterLink to="/">Anmelden</RouterLink>

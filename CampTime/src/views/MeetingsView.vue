@@ -289,6 +289,7 @@ const handleCreateCustomMeeting = async () => {
 
 <style scoped>
 .meetings-container {
+  padding: 1rem;
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 2rem;
@@ -626,7 +627,7 @@ const handleCreateCustomMeeting = async () => {
 }
 
 .top-actions {
-  margin-bottom: 1rem;
+  padding: 1em 1em 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
