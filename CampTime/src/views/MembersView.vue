@@ -305,7 +305,7 @@ th, td {
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--color-accent);
+  background: var(--color-accent); /* Vibrant green */
   opacity: 0.2;
   z-index: 0;
 }
@@ -320,11 +320,11 @@ th, td {
 }
 
 .icon-button.edit {
-  color: var(--color-primary);
+  color: var(--color-primary); /* Deep navy blue */
 }
 
 .icon-button.delete {
-  color: var(--color-danger);
+  color: var(--color-danger); /* Deep red */
 }
 
 .modal {
@@ -381,12 +381,12 @@ th, td {
 }
 
 .submit-btn {
-  background: var(--color-primary);
-  color: white;
+  background: var(--color-primary); /* Deep navy blue */
+  color: var(--color-text-light); /* Light grayish white */
 }
 
 .cancel-btn {
-  background: var(--color-border);
+  background: var(--color-border); /* Light gray */
 }
 
 .add-button {
