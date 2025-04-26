@@ -255,13 +255,13 @@ const handleCreateCustomMeeting = async () => {
                   @click="handleClearActivities(meeting.id)"
                   class="clear-button"
                 >
-                  🗑️ Clear
+                <i class='bx bx-trash'></i> Clear
                 </button>
                 <button 
                   @click="handleCancelMeeting(meeting)"
                   :class="['cancel-button', { 'is-cancelled': meeting.is_cancelled }]"
                 >
-                  {{ meeting.is_cancelled ? '✓ Abgesagt' : '❌ Absagen' }}
+                <i class='bx bxs-calendar-x' ></i> {{ meeting.is_cancelled ? 'Abgesagt' : 'Absagen' }}
                 </button>
               </div>
             </div>
@@ -510,8 +510,8 @@ const handleCreateCustomMeeting = async () => {
   left: 50%;
   transform: translate(-50%, -50%) rotate(-15deg);
   font-size: 2rem;
-  color: var(--color-danger);
-  border: 3px solid var(--color-danger);
+  color: var(--color-text);
+  border: 3px solid var(--color-text);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   pointer-events: none;
@@ -536,8 +536,8 @@ const handleCreateCustomMeeting = async () => {
   left: 50%;
   transform: translate(-50%, -50%) rotate(-15deg);
   font-size: 2rem;
-  color: var(--color-danger);
-  border: 3px solid var(--color-danger);
+  color: var(--color-text);
+  border: 3px solid var(--color-text);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   pointer-events: none;
